@@ -1,0 +1,3 @@
+docker/minio
+build/
+src/input.json

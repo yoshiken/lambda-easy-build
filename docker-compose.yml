@@ -1,0 +1,27 @@
+version: '3'
+services:
+  s3:
+    image: minio/minio
+    env_file: .env
+    command: server /data
+    volumes:
+      - ./docker/minio/s3data:/data
+      - ./docker/minio/config:/root/.minio
+    restart: always
+  lambda-run:
+    image: lambci/lambda:python3.7
+    volumes:
+      - ./src/:/var/task/
+      - ./build/local:/tmp/build
+  lambda-dev-build:
+    image: lambci/lambda:build-python3.7
+    volumes:
+      - ./src:/var/task
+      - ./build/local:/tmp/build
+    command: pip install -r requirements-dev.txt -t /tmp/build
+  lambda-build:
+    image: lambci/lambda:build-python3.7
+    volumes:
+      - ./src/:/var/task/
+      - ./build/lambda:/tmp/build
+    command: pip install -r requirements.txt -t /tmp/build
